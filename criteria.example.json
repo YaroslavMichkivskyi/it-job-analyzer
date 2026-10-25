@@ -1,0 +1,36 @@
+{
+  "_comment": "Copy to your own folder (never commit personal criteria) and pass it with `analyze.py prepare --criteria <file>`. Every key is optional; missing ones fall back to neutral defaults in analyze.py.",
+  "report_language": "en",
+  "currency_to_usd": { "USD": 1.0, "EUR": 1.08, "GBP": 1.27, "PLN": 0.25, "UAH": 0.024, "CZK": 0.043 },
+  "hard": {
+    "remote_only": false,
+    "salary_floor_usd": null,
+    "salary_min_floor_usd": null,
+    "max_experience_years": null
+  },
+  "my_level": "middle",
+  "preferred_company_countries": [],
+  "hard_conditions": [
+    "Main stack is <your language>",
+    "Role is <Backend / Fullstack / …>",
+    "Required experience roughly <N-2>…<N+1> years"
+  ],
+  "salary_target_usd": [3000, 3500],
+  "my_english": "b2",
+  "preferred_team_languages": [],
+  "company_type_points": { "product": 1.0, "outstaff": 0.6, "unknown": 0.4, "outsource": 0.2 },
+  "weights": { "company": 30, "cv": 40, "salary": 15, "team_language": 8, "english": 7 },
+  "tiers": { "first": 70, "second": 55, "maybe": 40 },
+  "exclude": {
+    "over_max_experience": false,
+    "allowed_languages": null,
+    "keywords": [],
+    "levels": [],
+    "require_any": []
+  },
+  "order": ["tier", "country", "score"],
+  "recency_days": [7, 14],
+  "ranking_notes": [
+    "Free-text preferences the analyzer should weigh in pros / cons and tier_override"
+  ]
+}
