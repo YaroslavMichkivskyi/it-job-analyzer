@@ -1,3 +1,9 @@
+---
+kind: daemon
+when: collector reports are ready → filter, merge duplicates, judge fit against the CV, research companies, rank into one big <ts>_analysis.md — subagent, ≤ 40 vacancies per instance
+works-for: domains/career/
+---
+
 # it-job-analyzer — ranks collected vacancies into one analysis report
 
 Takes the vacancy lists collected by `it-job-searcher` and turns them into one

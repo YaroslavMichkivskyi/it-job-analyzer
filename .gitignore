@@ -1,0 +1,2 @@
+# Python caches; personal criteria are passed by path and never live here
+__pycache__/
