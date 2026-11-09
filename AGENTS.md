@@ -34,7 +34,11 @@ salary, experience required — ordered by where to apply first.
 `A = daemons/it-job-analyzer/scripts/analyze.py`
 
 1. New analysis: `python A prepare --input <reports…> --criteria <file>` →
-   work folder. The script already dropped the unambiguous misses (per
+   work folder. Listings the collector never opened (no title and no text)
+   are skipped (`unopened_skipped`) and not remembered, so a later run that
+   opens them judges them for real; likewise only assessments made on a full
+   description are remembered across sessions. The script already dropped the
+   unambiguous misses (per
    `criteria.hard`), merged duplicates (same role at the same company across
    platforms / reposts; different seniority and hidden company names are never
    merged) and **reused assessments of vacancies judged in the last 30 days**
@@ -74,11 +78,12 @@ salary, experience required — ordered by where to apply first.
 | `experience_min_years` | number or `null`: minimum years asked (optional — parsed from `experience_required` when missing; above `criteria.hard.max_experience_years` → skip) |
 | `level`, `level_allows_lower` | lowest level the role is open to (`junior middle senior lead unknown`) and whether lower levels are considered (optional — parsed from the title when missing; above `criteria.my_level` and not open lower → one tier down) |
 | `company_country` | ISO code of where the company is founded / headquartered (`UA`, `PL`, `US`…) or `unknown`; `criteria.preferred_company_countries` go first within a tier |
-| `required_languages` | programming languages that are **must-have** experience (not "nice to have", not "read code"); lowercase. Missing → derived from `stack`. A language outside `criteria.exclude.allowed_languages` → the vacancy is left out of the report |
+| `required_languages` | programming languages that are **must-have** experience (not "nice to have", not "read code"); lowercase. Missing → derived from `stack`. Only when the criteria set `criteria.exclude.allowed_languages`: a language outside it → the vacancy is left out of the report |
 
-`criteria.exclude.require_any` (regexes) drops, already in `prepare` and without
-any LLM work, vacancies whose text matches none of them (e.g. AI-category roles
-with no JS/TS at all) — don't spend judgement on those.
+Optional `criteria.exclude.require_any` (regexes) drops, already in `prepare`
+and without any LLM work, vacancies whose text matches none of them. Criteria
+without these keys filter by no technology at all — a missing stack is then a
+CV-match gap (lower score), never an exclusion.
 
 Exclusions (`criteria.exclude`) remove a vacancy from the report entirely —
 not even listed under "skip"; they are only counted in the `.json`. The report

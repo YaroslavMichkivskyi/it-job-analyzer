@@ -237,7 +237,13 @@ def cmd_prepare(args) -> int:
     hard, ex = crit["hard"], crit["exclude"]
     L = LABELS.get(crit.get("report_language"), LABELS["en"])
     rejected, kept, excluded = [], [], []
+    unopened = 0
     for rec in by_source.values():
+        # A listing the collector never opened (no title, no text) can't be judged; skip it
+        # without remembering an assessment, so a later run that opens it judges it for real.
+        if not (rec.get("title") or "").strip() and not (rec.get("description") or "").strip():
+            unopened += 1
+            continue
         reason, hint = None, remote_hint(rec)
         title = (rec.get("title") or "").lower()
         if any(k.lower() in title for k in ex.get("keywords") or []):
@@ -310,7 +316,8 @@ def cmd_prepare(args) -> int:
                               "rejected_count": len(rejected), "candidates_count": len(candidates)})
     dump(work / "candidates.json", candidates)
     dump(work / "rejected.json", rejected)
-    print(json.dumps({"work": str(work), "loaded": len(by_source), "rejected": len(rejected),
+    print(json.dumps({"work": str(work), "loaded": len(by_source), "unopened_skipped": unopened,
+                      "rejected": len(rejected),
                       "candidates": len(candidates), "reused_from_earlier": reused,
                       "to_assess": len(candidates) - reused,
                       "companies": len({c["company_slug"] for c in candidates})}, ensure_ascii=False))
@@ -447,7 +454,9 @@ def cmd_save(args) -> int:
             continue
         dump(path, merged)
         now = datetime.now().isoformat(timespec="seconds")
-        for link in cands[key]["links"]:  # remember for later sessions
+        # Remember for later sessions — only a judgement made on the full text; a title-only
+        # guess is redone once a later run has opened the vacancy.
+        for link in cands[key]["links"] if cands[key].get("description_complete") else []:
             dump(SEEN / f"{seen_key(link)}.json", {"assessed_at": now, "assessment": merged})
         saved += 1
     print(json.dumps({"saved": saved, "rejected": bad}, ensure_ascii=False))
